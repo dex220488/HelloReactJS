@@ -5,23 +5,29 @@ import { Home } from './components/Home';
 import { FetchData } from './components/FetchData';
 import { Counter } from './components/Counter';
 import Person from './components/Person';
+import UserOutput from './components/UserOutput';
 
 import './custom.css'
 import person from './components/Person';
 
 class App extends Component {
-    //static displayName = App.name;
     state = {
         persons: [
             { name: 'Diego', age: 32 },
             { name: 'Aurora', age: 28 },
             { name: 'Ian', age: 2 }
         ],
-        otherState: 'some other state'
-    }
+        paragraphs: [{
+            title: 'What is Lorem Ipsum?',
+            body: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'
+        },
+        {
+            title: 'Why do we use it?',
+            body: 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more- or - less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English.Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\' will uncover many web sites still in their infancy.Various versions have evolved over the years, sometimes by accident, sometimes on purpose(injected humour and the like).'
+        }]
+    };
 
     switchNameHandler = (newName) => {
-        // DON'T DO THIS this.state.persons[0].name = "Ernesto";
         this.setState({
             persons: [
                 { name: newName, age: 32 },
@@ -41,6 +47,25 @@ class App extends Component {
         })
     }
 
+    changeFirstTitleHandler = (event) => {
+        let sectionIndex = event.target.parentElement.className;
+        let tempState = this.state;
+        let section = tempState.paragraphs[sectionIndex];
+        
+        if (event.target.className == "title") {
+            section.title = event.target.value;
+        }
+        else {
+            section.body = event.target.value;
+        }
+
+        tempState[sectionIndex] = section;
+
+        this.setState({
+            tempState
+        });
+    }
+
     render() {
         const style = {
             backgrounColor: 'white',
@@ -51,12 +76,13 @@ class App extends Component {
             margin: '16px auto',
             textAlign: 'center'
         }
+
         return (
             <Layout>
                 <h1>Hi, I'm a React App</h1>
                 <p onClick={this.switchNameHandler}>This is really working!</p>
                 <button className="bttn btn-success" style={style} onClick={() => this.switchNameHandler('New Name')}>Switch Name</button>
-                <Person
+                 <Person
                     name={this.state.persons[0].name}
                     age={this.state.persons[0].age} />
                 <Person
@@ -67,6 +93,18 @@ class App extends Component {
                 <Person
                     name={this.state.persons[2].name}
                     age={this.state.persons[2].age} />
+                <UserOutput
+                    section="0"
+                    title={this.state.paragraphs[0].title}
+                    content={this.state.paragraphs[0].body}
+                    changed={this.changeFirstTitleHandler}
+                />
+                <UserOutput
+                    section="1"
+                    title={this.state.paragraphs[1].title}
+                    content={this.state.paragraphs[1].body}
+                    changed={this.changeFirstTitleHandler}
+                />
             </Layout>
         )
     };
