@@ -17,6 +17,7 @@ class App extends Component {
             { name: 'Aurora', age: 28 },
             { name: 'Ian', age: 2 }
         ],
+        showPersons: false,
         paragraphs: [{
             title: 'What is Lorem Ipsum?',
             body: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'
@@ -51,7 +52,7 @@ class App extends Component {
         let sectionIndex = event.target.parentElement.className;
         let tempState = this.state;
         let section = tempState.paragraphs[sectionIndex];
-        
+
         if (event.target.className == "title") {
             section.title = event.target.value;
         }
@@ -64,6 +65,11 @@ class App extends Component {
         this.setState({
             tempState
         });
+    }
+
+    togglePersonsHandler = () => {
+        const doesShow = this.state.showPersons;
+        this.setState({ showPersons: !doesShow })
     }
 
     render() {
@@ -81,18 +87,28 @@ class App extends Component {
             <Layout>
                 <h1>Hi, I'm a React App</h1>
                 <p onClick={this.switchNameHandler}>This is really working!</p>
-                <button className="bttn btn-success" style={style} onClick={() => this.switchNameHandler('New Name')}>Switch Name</button>
-                 <Person
-                    name={this.state.persons[0].name}
-                    age={this.state.persons[0].age} />
-                <Person
-                    name={this.state.persons[1].name}
-                    age={this.state.persons[1].age}
-                    click={this.switchNameHandler.bind(this, 'Ernesto!!')}
-                    changed={this.nameChangedHandler}> My Hobbies are: singing and playing</Person>
-                <Person
-                    name={this.state.persons[2].name}
-                    age={this.state.persons[2].age} />
+                <button
+                    className="bttn btn-success"
+                    style={style}
+                    onClick={this.togglePersonsHandler}>Toggle Persons</button>
+
+                {
+                    this.state.showPersons === true ?
+                        <div >
+                            <Person
+                                name={this.state.persons[0].name}
+                                age={this.state.persons[0].age} />
+                            <Person
+                                name={this.state.persons[1].name}
+                                age={this.state.persons[1].age}
+                                click={this.switchNameHandler.bind(this, 'Ernesto!!')}
+                                changed={this.nameChangedHandler}> My Hobbies are: singing and playing</Person>
+                            <Person
+                                name={this.state.persons[2].name}
+                                age={this.state.persons[2].age} />
+                        </div> : null
+                }
+
                 <UserOutput
                     section="0"
                     title={this.state.paragraphs[0].title}
