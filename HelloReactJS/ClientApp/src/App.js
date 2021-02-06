@@ -1,21 +1,15 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router';
 import { Layout } from './components/Layout';
-import { Home } from './components/Home';
-import { FetchData } from './components/FetchData';
-import { Counter } from './components/Counter';
 import Person from './components/Person';
 import UserOutput from './components/UserOutput';
-
 import './custom.css'
-import person from './components/Person';
 
 class App extends Component {
     state = {
         persons: [
-            { name: 'Diego', age: 32 },
-            { name: 'Aurora', age: 28 },
-            { name: 'Ian', age: 2 }
+            { id: '1', name: 'Diego', age: 32 },
+            { id: '2', name: 'Aurora', age: 28 },
+            { id: '3', name: 'Ian', age: 2 }
         ],
         showPersons: false,
         paragraphs: [{
@@ -28,24 +22,23 @@ class App extends Component {
         }]
     };
 
-    switchNameHandler = (newName) => {
-        this.setState({
-            persons: [
-                { name: newName, age: 32 },
-                { name: 'Aurora', age: 28 },
-                { name: 'Ian', age: 2 }
-            ]
-        })
+    deletePersonHandler = (personIndex) => {
+        //const persons = this.state.persons.slice();
+        const persons = [...this.state.persons] // Create a new copy, same as slice()
+        persons.splice(personIndex, 1);
+        this.setState({ persons: persons });
     }
 
-    nameChangedHandler = (event) => {
-        this.setState({
-            persons: [
-                { name: 'Diego', age: 32 },
-                { name: event.target.value, age: 28 },
-                { name: 'Ian', age: 2 }
-            ]
-        })
+    nameChangedHandler = (event, id) => {
+        const personIndex = this.state.persons.findIndex(person => {
+            return person.id === id;
+        });
+
+        const person = { ...this.state.persons[personIndex] };
+        person.name = event.target.value;
+        const persons = [...this.state.persons];
+        persons[personIndex] = person;
+        this.setState({ persons: persons });
     }
 
     changeFirstTitleHandler = (event) => {
@@ -53,7 +46,7 @@ class App extends Component {
         let tempState = this.state;
         let section = tempState.paragraphs[sectionIndex];
 
-        if (event.target.className == "title") {
+        if (event.target.className === "title") {
             section.title = event.target.value;
         }
         else {
@@ -83,6 +76,25 @@ class App extends Component {
             textAlign: 'center'
         }
 
+        let persons = null;
+
+        if (this.state.showPersons) {
+            persons = (
+                <div>
+                    {
+                        this.state.persons.map((person, index) => {
+                            return <Person
+                                click={this.deletePersonHandler.bind(this, index)}
+                                name={person.name}
+                                age={person.age}
+                                key={person.id}
+                                changed={(event) => this.nameChangedHandler(event, person.id)}
+                            />
+                        })}
+                </div>
+            );
+        }
+
         return (
             <Layout>
                 <h1>Hi, I'm a React App</h1>
@@ -91,24 +103,7 @@ class App extends Component {
                     className="bttn btn-success"
                     style={style}
                     onClick={this.togglePersonsHandler}>Toggle Persons</button>
-
-                {
-                    this.state.showPersons === true ?
-                        <div >
-                            <Person
-                                name={this.state.persons[0].name}
-                                age={this.state.persons[0].age} />
-                            <Person
-                                name={this.state.persons[1].name}
-                                age={this.state.persons[1].age}
-                                click={this.switchNameHandler.bind(this, 'Ernesto!!')}
-                                changed={this.nameChangedHandler}> My Hobbies are: singing and playing</Person>
-                            <Person
-                                name={this.state.persons[2].name}
-                                age={this.state.persons[2].age} />
-                        </div> : null
-                }
-
+                {persons}
                 <UserOutput
                     section="0"
                     title={this.state.paragraphs[0].title}
